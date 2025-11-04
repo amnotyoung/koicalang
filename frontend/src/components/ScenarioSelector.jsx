@@ -172,6 +172,11 @@ const ScenarioSelector = ({ onSelectScenario }) => {
                   <p className="text-sm text-gray-600 mt-1">
                     {phrase.romanization}
                   </p>
+                  {phrase.pronunciation_kr && (
+                    <p className="text-sm text-gray-500 mt-0.5 italic">
+                      ({phrase.pronunciation_kr})
+                    </p>
+                  )}
                   <p className="text-sm text-primary-700 mt-1">
                     💬 {phrase.korean}
                   </p>
