@@ -38,7 +38,9 @@ const VoiceRecorder = ({ onRecordingComplete, disabled = false }) => {
       };
 
       mediaRecorder.onstop = () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
+        // Use the actual MIME type from MediaRecorder
+        const mimeType = mediaRecorder.mimeType || 'audio/webm;codecs=opus';
+        const audioBlob = new Blob(audioChunksRef.current, { type: mimeType });
         setAudioBlob(audioBlob);
 
         if (onRecordingComplete) {

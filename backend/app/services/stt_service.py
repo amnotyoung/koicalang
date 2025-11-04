@@ -49,10 +49,9 @@ class STTService:
             raise RuntimeError("STT Service not initialized")
 
         try:
-            # Configure recognition settings
+            # Configure recognition settings for WEBM OPUS (browser default)
             config = RecognitionConfig(
-                encoding=RecognitionConfig.AudioEncoding.LINEAR16,
-                sample_rate_hertz=sample_rate,
+                encoding=RecognitionConfig.AudioEncoding.WEBM_OPUS,
                 language_code=language_code,
                 enable_word_time_offsets=enable_word_time_offsets,
                 enable_automatic_punctuation=True,
