@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f8fafc;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* 음성 녹음 버튼 애니메이션 */
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.95);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(0.95);
+    opacity: 1;
+  }
+}
+
+.recording {
+  animation: pulse-ring 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* 큰 버튼 스타일 */
+.btn-primary {
+  @apply px-8 py-4 text-lg font-semibold rounded-xl bg-primary-600 text-white hover:bg-primary-700 active:bg-primary-800 transition-colors shadow-lg;
+}
+
+.btn-secondary {
+  @apply px-8 py-4 text-lg font-semibold rounded-xl bg-gray-200 text-gray-800 hover:bg-gray-300 active:bg-gray-400 transition-colors;
+}
+
+/* 음성 중심 UI를 위한 큰 터치 영역 */
+.touch-target {
+  min-width: 44px;
+  min-height: 44px;
+}
