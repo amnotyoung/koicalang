@@ -18,7 +18,7 @@ class LLMService:
         """Initialize Gemini API"""
         try:
             genai.configure(api_key=settings.GEMINI_API_KEY)
-            self.model = genai.GenerativeModel('gemini-pro')
+            self.model = genai.GenerativeModel('gemini-1.5-flash')
             logger.info("LLM Service initialized successfully")
         except Exception as e:
             logger.error(f"Failed to initialize LLM Service: {e}")
