@@ -50,9 +50,9 @@ class STTService:
 
         try:
             # Configure recognition settings
+            # Use WEBM_OPUS for browser recordings, remove sample_rate_hertz to auto-detect
             config = RecognitionConfig(
-                encoding=RecognitionConfig.AudioEncoding.LINEAR16,
-                sample_rate_hertz=sample_rate,
+                encoding=RecognitionConfig.AudioEncoding.WEBM_OPUS,
                 language_code=language_code,
                 enable_word_time_offsets=enable_word_time_offsets,
                 enable_automatic_punctuation=True,

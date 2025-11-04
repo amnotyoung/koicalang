@@ -58,10 +58,19 @@ class TTSService:
             }
 
             # Build the voice request
-            voice = texttospeech.VoiceSelectionParams(
-                language_code=language_code,
-                ssml_gender=gender_map.get(voice_gender.upper(), texttospeech.SsmlVoiceGender.NEUTRAL),
-            )
+            # For Khmer, try to use available voice, fallback to English if not available
+            try:
+                voice = texttospeech.VoiceSelectionParams(
+                    language_code=language_code,
+                    ssml_gender=gender_map.get(voice_gender.upper(), texttospeech.SsmlVoiceGender.NEUTRAL),
+                )
+            except Exception:
+                # Fallback to English if language not supported
+                logger.warning(f"Language {language_code} not fully supported, using en-US")
+                voice = texttospeech.VoiceSelectionParams(
+                    language_code="en-US",
+                    ssml_gender=texttospeech.SsmlVoiceGender.NEUTRAL,
+                )
 
             # Select the type of audio file and audio settings
             audio_config = texttospeech.AudioConfig(
