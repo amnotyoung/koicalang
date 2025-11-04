@@ -77,13 +77,14 @@ async def voice_conversation(
     language_code: str = "km-KH",
 ):
     """
-    음성 대화 - 음성을 받아서 텍스트 응답과 음성 응답을 모두 반환
+    음성 대화 - 음성을 받아서 텍스트 응답과 음성 응답, 학습 피드백을 모두 반환
 
-    Complete voice conversation flow:
+    Complete voice conversation flow with learning feedback:
     1. User speaks (audio input)
     2. STT: Convert to text
-    3. LLM: Generate response
-    4. Return both text and audio response
+    3. LLM: Analyze pronunciation, grammar, and naturalness
+    4. LLM: Generate contextual response
+    5. Return text, audio response, and learning feedback
     """
     try:
         # Step 1: Transcribe user's speech
@@ -101,7 +102,14 @@ async def voice_conversation(
 
         user_text = transcription["transcript"]
 
-        # Step 2: Generate AI response
+        # Step 2: Analyze user's pronunciation and grammar
+        pronunciation_analysis = await llm_service.analyze_pronunciation(
+            user_text=user_text,
+            expected_text=None,
+            language=_get_language_name(language_code),
+        )
+
+        # Step 3: Generate AI response
         ai_response = await llm_service.generate_response(
             user_input=user_text,
             conversation_context=[],  # Can be extended to include history
@@ -109,7 +117,7 @@ async def voice_conversation(
             language=_get_language_name(language_code),
         )
 
-        # Step 3: Convert AI response to speech
+        # Step 4: Convert AI response to speech
         response_text = ai_response.get("response_text", "")
         audio_response = await tts_service.synthesize_speech(
             text=response_text,
@@ -126,6 +134,15 @@ async def voice_conversation(
                 "user_input": {
                     "transcript": user_text,
                     "confidence": transcription["confidence"],
+                    "words": transcription.get("words", []),
+                },
+                "pronunciation_feedback": {
+                    "accuracy_score": pronunciation_analysis.get("accuracy_score", 0),
+                    "naturalness_score": pronunciation_analysis.get("naturalness_score", 0),
+                    "pronunciation_feedback": pronunciation_analysis.get("pronunciation_feedback", ""),
+                    "grammar_feedback": pronunciation_analysis.get("grammar_feedback", ""),
+                    "suggestions": pronunciation_analysis.get("suggestions", []),
+                    "correct_version": pronunciation_analysis.get("correct_version", user_text),
                 },
                 "ai_response": {
                     "text": response_text,

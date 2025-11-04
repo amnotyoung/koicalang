@@ -64,13 +64,14 @@ const ConversationUI = ({ scenario = 'general', initialMessage = null }) => {
       );
 
       if (response.success) {
-        const { user_input, ai_response } = response.data;
+        const { user_input, pronunciation_feedback, ai_response } = response.data;
 
-        // Add user message
+        // Add user message with pronunciation feedback
         setMessages(prev => [...prev, {
           role: 'user',
           content: user_input.transcript,
           confidence: user_input.confidence,
+          feedback: pronunciation_feedback,
           timestamp: new Date().toISOString(),
         }]);
 
@@ -142,11 +143,76 @@ const ConversationUI = ({ scenario = 'general', initialMessage = null }) => {
                   </p>
                 )}
 
-                {/* Confidence for user messages */}
-                {message.role === 'user' && message.confidence && (
-                  <p className="text-xs mt-2 opacity-75">
-                    정확도: {(message.confidence * 100).toFixed(0)}%
-                  </p>
+                {/* Feedback for user messages */}
+                {message.role === 'user' && message.feedback && (
+                  <div className="mt-3 space-y-2 text-sm border-t border-white/30 pt-3">
+                    {/* Scores */}
+                    <div className="flex gap-4">
+                      <div className="flex items-center gap-1">
+                        <span className="font-semibold">정확도:</span>
+                        <span className={`font-bold ${
+                          message.feedback.accuracy_score >= 80 ? 'text-green-300' :
+                          message.feedback.accuracy_score >= 60 ? 'text-yellow-300' :
+                          'text-red-300'
+                        }`}>
+                          {message.feedback.accuracy_score}점
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <span className="font-semibold">자연스러움:</span>
+                        <span className={`font-bold ${
+                          message.feedback.naturalness_score >= 80 ? 'text-green-300' :
+                          message.feedback.naturalness_score >= 60 ? 'text-yellow-300' :
+                          'text-red-300'
+                        }`}>
+                          {message.feedback.naturalness_score}점
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Pronunciation Feedback */}
+                    {message.feedback.pronunciation_feedback && (
+                      <div>
+                        <p className="font-semibold text-xs mb-1">📢 발음 피드백:</p>
+                        <p className="text-xs opacity-90">{message.feedback.pronunciation_feedback}</p>
+                      </div>
+                    )}
+
+                    {/* Grammar Feedback */}
+                    {message.feedback.grammar_feedback && (
+                      <div>
+                        <p className="font-semibold text-xs mb-1">📝 문법 피드백:</p>
+                        <p className="text-xs opacity-90">{message.feedback.grammar_feedback}</p>
+                      </div>
+                    )}
+
+                    {/* Correct Version */}
+                    {message.feedback.correct_version && message.feedback.correct_version !== message.content && (
+                      <div>
+                        <p className="font-semibold text-xs mb-1">✨ 올바른 표현:</p>
+                        <p className="text-xs opacity-90 font-medium">{message.feedback.correct_version}</p>
+                      </div>
+                    )}
+
+                    {/* Suggestions */}
+                    {message.feedback.suggestions && message.feedback.suggestions.length > 0 && (
+                      <div>
+                        <p className="font-semibold text-xs mb-1">💡 개선 제안:</p>
+                        <ul className="list-disc list-inside text-xs opacity-90 space-y-1">
+                          {message.feedback.suggestions.map((suggestion, i) => (
+                            <li key={i}>{suggestion}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    {/* STT Confidence */}
+                    {message.confidence && (
+                      <p className="text-xs mt-2 opacity-75">
+                        음성 인식 신뢰도: {(message.confidence * 100).toFixed(0)}%
+                      </p>
+                    )}
+                  </div>
                 )}
 
                 {/* Key phrases */}
