@@ -99,18 +99,18 @@ const ConversationUI = ({ scenario = 'general', initialMessage = null }) => {
           timestamp: new Date().toISOString(),
         }]);
 
-        // Play AI audio response
-        if (ai_response.audio) {
-          const audioData = Uint8Array.from(atob(ai_response.audio), c => c.charCodeAt(0));
-          const audioBlob = new Blob([audioData], { type: 'audio/mpeg' });
-          const audioUrl = URL.createObjectURL(audioBlob);
-          setCurrentAudio(audioUrl);
+        // Play AI audio response - disabled as Khmer TTS not available
+        // if (ai_response.audio) {
+        //   const audioData = Uint8Array.from(atob(ai_response.audio), c => c.charCodeAt(0));
+        //   const audioBlob = new Blob([audioData], { type: 'audio/mpeg' });
+        //   const audioUrl = URL.createObjectURL(audioBlob);
+        //   setCurrentAudio(audioUrl);
 
-          if (audioRef.current) {
-            audioRef.current.src = audioUrl;
-            audioRef.current.play();
-          }
-        }
+        //   if (audioRef.current) {
+        //     audioRef.current.src = audioUrl;
+        //     audioRef.current.play();
+        //   }
+        // }
       }
     } catch (error) {
       console.error('Conversation error:', error);

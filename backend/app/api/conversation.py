@@ -117,16 +117,20 @@ async def voice_conversation(
             language=_get_language_name(language_code),
         )
 
-        # Step 4: Convert AI response to speech
+        # Step 4: Convert AI response to speech (skip if TTS fails - Khmer may not be supported)
         response_text = ai_response.get("response_text", "")
-        audio_response = await tts_service.synthesize_speech(
-            text=response_text,
-            language_code=language_code,
-        )
-
-        # Encode audio as base64 for JSON response
-        import base64
-        audio_base64 = base64.b64encode(audio_response).decode('utf-8')
+        audio_base64 = None
+        try:
+            audio_response = await tts_service.synthesize_speech(
+                text=response_text,
+                language_code=language_code,
+            )
+            # Encode audio as base64 for JSON response
+            import base64
+            audio_base64 = base64.b64encode(audio_response).decode('utf-8')
+        except Exception as e:
+            logger.warning(f"TTS skipped (not available for {language_code}): {e}")
+            # Continue without audio
 
         return {
             "success": True,
