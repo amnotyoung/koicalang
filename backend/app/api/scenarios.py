@@ -51,8 +51,18 @@ SCENARIOS = {
             {"khmer": "បន្លែ", "romanization": "bonlae", "meaning": "채소"},
         ],
         "conversation_starters": [
-            "ជំរាបសួរ! អ្នកត្រូវការអ្វី?",  # Hello! What do you need?
-            "មើលទៅមើលមក ទិញអ្វីខ្លះ?",  # Looking around, what are you buying?
+            {
+                "khmer": "ជំរាបសួរ! អ្នកត្រូវការអ្វី?",
+                "romanization": "Chumreap suor! Nek trov kar avey?",
+                "korean": "안녕하세요! 무엇이 필요하세요?",
+                "romanization_kr": "춤립 수어! 넥 트러우 까 아베이?"
+            },
+            {
+                "khmer": "មើលទៅមើលមក ទិញអ្វីខ្លះ?",
+                "romanization": "Meul tov meul mok, tinh avey klah?",
+                "korean": "구경하시나요, 무엇을 사실 건가요?",
+                "romanization_kr": "믈 터우 믈 목, 틴 아베이 끌라?"
+            },
         ],
     },
     "transport": {
@@ -95,8 +105,18 @@ SCENARIOS = {
             {"khmer": "ឈប់", "romanization": "chhob", "meaning": "멈추다"},
         ],
         "conversation_starters": [
-            "ទៅណា បង?",  # Where are you going?
-            "តម្លៃ ២ ដុល្លារ អញ្ចឹង",  # The price is 2 dollars
+            {
+                "khmer": "ទៅណា បង?",
+                "romanization": "Tov na, bong?",
+                "korean": "어디 가세요?",
+                "romanization_kr": "터우 나, 봉?"
+            },
+            {
+                "khmer": "តម្លៃ ២ ដុល្លារ អញ្ចឹង",
+                "romanization": "Tomlai pir dollar onchheung",
+                "korean": "가격은 2달러예요",
+                "romanization_kr": "톰라이 삐 달러 언츙"
+            },
         ],
     },
     "workplace": {
@@ -139,8 +159,18 @@ SCENARIOS = {
             {"khmer": "អរគុណច្រើន", "romanization": "orkun chraen", "meaning": "대단히 감사합니다"},
         ],
         "conversation_starters": [
-            "ជំរាបសួរ! សុខសប្បាយទេ?",  # Hello! How are you?
-            "ថ្ងៃនេះមានការងារច្រើនទេ?",  # Do you have a lot of work today?
+            {
+                "khmer": "ជំរាបសួរ! សុខសប្បាយទេ?",
+                "romanization": "Chumreap suor! Sok sabbaay te?",
+                "korean": "안녕하세요! 잘 지내세요?",
+                "romanization_kr": "춤립 수어! 속 사빠이 테?"
+            },
+            {
+                "khmer": "ថ្ងៃនេះមានការងារច្រើនទេ?",
+                "romanization": "Tngai nih mean kar ngar chraen te?",
+                "korean": "오늘 일이 많으세요?",
+                "romanization_kr": "트응아이 니 미안 까 응아 츠런 테?"
+            },
         ],
     },
 }
@@ -264,7 +294,8 @@ async def start_scenario_conversation(scenario_id: str) -> Dict[str, Any]:
         "success": True,
         "data": {
             "scenario": scenario_id,
-            "initial_message": starter,
+            "initial_message": starter["khmer"],  # For backward compatibility
+            "starter": starter,  # Full starter information
             "scenario_name": scenario["name_kr"],
             "tips": "자연스럽게 대화를 시작해보세요. 배운 표현을 사용해보세요!",
         },

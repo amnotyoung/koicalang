@@ -11,6 +11,36 @@ import json
 logger = logging.getLogger(__name__)
 
 
+def clean_json_response(text: str) -> str:
+    """
+    Clean markdown code blocks and other formatting from LLM JSON responses
+
+    Args:
+        text: Raw text from LLM that may contain markdown formatting
+
+    Returns:
+        Cleaned JSON string
+    """
+    # Remove markdown code blocks (```json ... ``` or ``` ... ```)
+    text = text.strip()
+
+    # Check for code block markers
+    if text.startswith('```'):
+        # Find the end of the opening marker (could be ```json or just ```)
+        first_newline = text.find('\n')
+        if first_newline != -1:
+            text = text[first_newline + 1:]
+
+        # Remove closing ```
+        if text.endswith('```'):
+            text = text[:-3]
+
+    # Remove any remaining backticks at the start/end
+    text = text.strip('`').strip()
+
+    return text
+
+
 class LLMService:
     """Language Learning Model service for conversation and feedback"""
 
@@ -66,13 +96,16 @@ Focus on practical communication, not academic perfection. Be encouraging but ho
 """
 
             response = self.model.generate_content(prompt)
-            result = json.loads(response.text)
+            # Clean the response text to remove markdown code blocks
+            cleaned_text = clean_json_response(response.text)
+            result = json.loads(cleaned_text)
 
             return result
 
-        except json.JSONDecodeError:
+        except json.JSONDecodeError as e:
             # Fallback if response is not JSON
-            logger.warning("LLM response was not valid JSON, returning raw response")
+            logger.warning(f"LLM response was not valid JSON: {e}")
+            logger.warning(f"Raw response: {response.text}")
             return {
                 "accuracy_score": 50,
                 "pronunciation_feedback": response.text,
@@ -147,12 +180,15 @@ Respond in JSON format:
 """
 
             response = self.model.generate_content(prompt)
-            result = json.loads(response.text)
+            # Clean the response text to remove markdown code blocks
+            cleaned_text = clean_json_response(response.text)
+            result = json.loads(cleaned_text)
 
             return result
 
-        except json.JSONDecodeError:
-            logger.warning("LLM response was not valid JSON")
+        except json.JSONDecodeError as e:
+            logger.warning(f"LLM response was not valid JSON: {e}")
+            logger.warning(f"Raw response: {response.text}")
             return {
                 "response_text": "សូមអភ័យទោស (Som aphey tos - Sorry)",
                 "response_translation_kr": "죄송합니다",
@@ -212,12 +248,15 @@ Be constructive and encouraging. Focus on practical progress.
 """
 
             response = self.model.generate_content(prompt)
-            result = json.loads(response.text)
+            # Clean the response text to remove markdown code blocks
+            cleaned_text = clean_json_response(response.text)
+            result = json.loads(cleaned_text)
 
             return result
 
-        except json.JSONDecodeError:
-            logger.warning("LLM evaluation response was not valid JSON")
+        except json.JSONDecodeError as e:
+            logger.warning(f"LLM evaluation response was not valid JSON: {e}")
+            logger.warning(f"Raw response: {response.text}")
             return {
                 "overall_score": 70,
                 "fluency_score": 70,

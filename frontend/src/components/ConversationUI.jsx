@@ -16,14 +16,28 @@ const ConversationUI = ({ scenario = 'general', initialMessage = null }) => {
   useEffect(() => {
     // Add initial AI message if provided
     if (initialMessage) {
-      setMessages([{
+      // Handle both string (legacy) and object (new) format
+      const messageContent = typeof initialMessage === 'string'
+        ? initialMessage
+        : initialMessage.khmer;
+
+      const messageData = {
         role: 'assistant',
-        content: initialMessage,
+        content: messageContent,
         timestamp: new Date().toISOString(),
-      }]);
+      };
+
+      // Add translation and romanization if available
+      if (typeof initialMessage === 'object') {
+        messageData.translation = initialMessage.korean;
+        messageData.romanization = initialMessage.romanization;
+        messageData.romanizationKr = initialMessage.romanization_kr;
+      }
+
+      setMessages([messageData]);
 
       // Synthesize initial message
-      synthesizeMessage(initialMessage);
+      synthesizeMessage(messageContent);
     }
   }, [initialMessage]);
 
@@ -136,11 +150,25 @@ const ConversationUI = ({ scenario = 'general', initialMessage = null }) => {
               >
                 <p className="text-lg">{message.content}</p>
 
-                {/* Translation for AI messages */}
-                {message.role === 'assistant' && message.translation && (
-                  <p className="text-sm mt-2 opacity-75">
-                    💬 {message.translation}
-                  </p>
+                {/* Translation and pronunciation for AI messages */}
+                {message.role === 'assistant' && (
+                  <div className="mt-2 space-y-1">
+                    {message.translation && (
+                      <p className="text-sm opacity-75">
+                        💬 {message.translation}
+                      </p>
+                    )}
+                    {message.romanization && (
+                      <p className="text-xs opacity-60 italic">
+                        🔤 {message.romanization}
+                      </p>
+                    )}
+                    {message.romanizationKr && (
+                      <p className="text-xs opacity-60">
+                        🗣️ {message.romanizationKr}
+                      </p>
+                    )}
+                  </div>
                 )}
 
                 {/* Feedback for user messages */}

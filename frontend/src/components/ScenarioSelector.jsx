@@ -47,7 +47,14 @@ const ScenarioSelector = ({ onSelectScenario }) => {
     try {
       const response = await scenariosAPI.start(selectedScenario);
       if (response.success) {
-        onSelectScenario(selectedScenario, response.data.initial_message);
+        // Pass the full starter object if available, otherwise fall back to initial_message
+        const starterInfo = response.data.starter || {
+          khmer: response.data.initial_message,
+          korean: '',
+          romanization: '',
+          romanization_kr: ''
+        };
+        onSelectScenario(selectedScenario, starterInfo);
       }
     } catch (error) {
       console.error('Failed to start conversation:', error);
