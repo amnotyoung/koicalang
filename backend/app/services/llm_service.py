@@ -21,24 +21,30 @@ def clean_json_response(text: str) -> str:
     Returns:
         Cleaned JSON string
     """
-    # Remove markdown code blocks (```json ... ``` or ``` ... ```)
     text = text.strip()
 
-    # Check for code block markers
-    if text.startswith('```'):
-        # Find the end of the opening marker (could be ```json or just ```)
-        first_newline = text.find('\n')
-        if first_newline != -1:
-            text = text[first_newline + 1:]
+    # Find JSON content between ``` markers
+    if '```' in text:
+        # Find the first opening ```
+        start_idx = text.find('```')
+        if start_idx != -1:
+            # Skip past the opening marker and optional 'json' label
+            start_idx = text.find('\n', start_idx)
+            if start_idx != -1:
+                start_idx += 1
 
-        # Remove closing ```
-        if text.endswith('```'):
-            text = text[:-3]
+                # Find the closing ```
+                end_idx = text.find('```', start_idx)
+                if end_idx != -1:
+                    text = text[start_idx:end_idx]
 
-    # Remove any remaining backticks at the start/end
-    text = text.strip('`').strip()
+    # Try to find JSON object boundaries { ... }
+    if '{' in text and '}' in text:
+        start = text.find('{')
+        end = text.rfind('}') + 1
+        text = text[start:end]
 
-    return text
+    return text.strip()
 
 
 class LLMService:

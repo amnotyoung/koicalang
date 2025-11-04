@@ -5,12 +5,14 @@ Conversation API endpoints
 from fastapi import APIRouter, HTTPException, UploadFile, File
 from pydantic import BaseModel
 from typing import List, Optional, Dict, Any
+import logging
 
 from app.services.llm_service import llm_service
 from app.services.stt_service import stt_service
 from app.services.tts_service import tts_service
 
 router = APIRouter()
+logger = logging.getLogger(__name__)
 
 
 class Message(BaseModel):
