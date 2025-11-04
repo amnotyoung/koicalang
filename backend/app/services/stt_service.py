@@ -27,7 +27,7 @@ class STTService:
         self,
         audio_content: bytes,
         language_code: str = "km-KH",  # Khmer (Cambodia)
-        sample_rate: int = None,
+        sample_rate: int = 16000,
         enable_word_time_offsets: bool = True,
     ) -> Dict[str, Any]:
         """
@@ -36,7 +36,7 @@ class STTService:
         Args:
             audio_content: Audio file content in bytes
             language_code: Language code (km-KH for Khmer, lo-LA for Lao, vi-VN for Vietnamese)
-            sample_rate: Audio sample rate in Hz (None for auto-detect)
+            sample_rate: Audio sample rate in Hz
             enable_word_time_offsets: Whether to include word-level timestamps
 
         Returns:
@@ -49,9 +49,10 @@ class STTService:
             raise RuntimeError("STT Service not initialized")
 
         try:
-            # Configure recognition settings - let Google auto-detect encoding and sample rate
+            # Configure recognition settings
             config = RecognitionConfig(
-                encoding=RecognitionConfig.AudioEncoding.WEBM_OPUS,
+                encoding=RecognitionConfig.AudioEncoding.LINEAR16,
+                sample_rate_hertz=sample_rate,
                 language_code=language_code,
                 enable_word_time_offsets=enable_word_time_offsets,
                 enable_automatic_punctuation=True,
