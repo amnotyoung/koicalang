@@ -36,8 +36,8 @@ const ConversationUI = ({ scenario = 'general', initialMessage = null }) => {
 
       setMessages([messageData]);
 
-      // Synthesize initial message
-      synthesizeMessage(messageContent);
+      // Synthesize initial message - disabled temporarily as Khmer TTS may not be available
+      // synthesizeMessage(messageContent);
     }
   }, [initialMessage]);
 
