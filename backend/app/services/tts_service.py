@@ -57,11 +57,17 @@ class TTSService:
                 "FEMALE": texttospeech.SsmlVoiceGender.FEMALE,
             }
 
-            # Build the voice request
-            voice = texttospeech.VoiceSelectionParams(
-                language_code=language_code,
-                ssml_gender=gender_map.get(voice_gender.upper(), texttospeech.SsmlVoiceGender.NEUTRAL),
-            )
+            # Build the voice request with explicit voice name for Khmer
+            voice_params = {
+                "language_code": language_code,
+                "ssml_gender": gender_map.get(voice_gender.upper(), texttospeech.SsmlVoiceGender.NEUTRAL),
+            }
+
+            # Use specific voice name for Khmer to avoid empty voice error
+            if language_code == "km-KH":
+                voice_params["name"] = "km-KH-Wavenet-A"
+
+            voice = texttospeech.VoiceSelectionParams(**voice_params)
 
             # Select the type of audio file and audio settings
             audio_config = texttospeech.AudioConfig(
